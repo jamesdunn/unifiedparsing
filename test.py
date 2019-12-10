@@ -5,6 +5,9 @@ import argparse
 from distutils.version import LooseVersion
 # Numerical libs
 import numpy as np
+import sys
+np.set_printoptions(threshold=sys.maxsize)
+np.core.arrayprint._line_width = sys.maxsize
 import torch
 import torch.nn as nn
 from scipy.io import loadmat
@@ -19,8 +22,18 @@ import cv2
 from broden_dataset_utils.joint_dataset import broden_dataset
 from utils import maskrcnn_colorencode, remove_small_mat
 
+import pandas as pd
 
 def visualize_result(data, preds, args):
+
+    # Adding the next three lines to print results in plaintext format for later parsing.
+    text_results = open(os.path.join(args.result, args.test_img.split('/')[-1] + '.txt'), 'w')
+    object_results = preds['object']
+    #print(np.array(object_results), file = text_results)
+    #print(object_results, file = text_results)
+    print(np.array2string(object_results).replace('\n','').replace(']','\n').replace('[',' ').replace('    ',' ').replace('   ',' ').replace('  ',' '), file = text_results)
+    #print(pd.DataFrame(object_results), file = text_results) 
+    text_results.close()
 
     np.random.seed(233)
     color_list = np.random.rand(1000, 3) * .7 + .3
